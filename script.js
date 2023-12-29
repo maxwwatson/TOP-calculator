@@ -1,10 +1,13 @@
 // calculator operations globals
 let numClicked;
-let numA = '';
+let numA = '0';
 let numB = '';
 let operator = '';
 let sum = '';
 let display = `${numA} ${operator} ${numB}`;
+
+let displayPara = document.querySelector('#displayPara');
+let displaySum = document.querySelector('#displaySum');
 
 // **** setup all event listeners  ****
 // numbers
@@ -13,53 +16,127 @@ console.log(numBtns[0].textContent);
 for(let i = 0; i < numBtns.length; i++) {
     numBtns[i].addEventListener('click', () => {
         numClicked = numBtns[i].textContent;
-        if(numA == '') numA = numClicked;
+        if(numA == '' || numA == '0') numA = numClicked;
         else if(operator == '') numA += numClicked;
         else numB += numClicked;
-        console.log(numClicked);
         populateDisplay();
     });
 }
+const backspaceBtn = document.querySelector('.backspace');
+const clearBtn = document.querySelector('.clear');
+const allClearBtn = document.querySelector('.allClear');
+const negativeBtn = document.querySelector('.negative');
+const equalsBtn = document.querySelector('.equals');
+
+backspaceBtn.addEventListener('click', () => {
+    if(numB == '') numA = numA.slice(0,-1);
+    else numB = numB.slice(0,-1);
+    populateDisplay();
+});
+clearBtn.addEventListener('click', () => {
+    clearDisplay();
+});
+allClearBtn.addEventListener('click', () => {
+    clearDisplayAll(); 
+});
+negativeBtn.addEventListener('click', () => {
+    if(numB == '') {numA = numA * (-1);}
+    else {numB = numB * (-1);}
+    console.log(`NumA ${numA} numB ${numB}`)
+    populateDisplay();
+});
+
+equalsBtn.addEventListener('click', equals);
+// operators 
+const plusBtn = document.querySelector('.plus');
+const minusBtn = document.querySelector('.minus');
+const multiplyBtn = document.querySelector('.multiply');
+const divideBtn  = document.querySelector('.divide');
+
+plusBtn.addEventListener('click', () => {
+    if(sum != '' && (numA == '' || numA == '0')) {
+        numA = sum;
+        sum = 0;
+    }
+    operator = '+';
+    populateDisplay();
+});
+
+minusBtn.addEventListener('click', () => {
+    if(sum != '' && (numA == '' || numA == '0')) {
+        numA = sum;
+        sum = 0;
+    }
+    operator = '-';
+    populateDisplay();
+})
+
+multiplyBtn.addEventListener('click', () => {
+    if(sum != '' && (numA == '' || numA == '0')) {
+        numA = sum;
+        sum = 0;
+    }
+    operator = '*';
+    populateDisplay();
+})
+
+divideBtn.addEventListener('click', () => {
+    if(sum != '' && (numA == '' || numA == '0')) {
+        numA = sum;
+        sum = 0;
+    }
+    operator = '/';
+    populateDisplay();
+})
 // backspace
+
 // negative or positive 
 // clear
 // all clear 
 // divide multiply minus plus 
 
+//initialize
+populateDisplay();
 // Step 1: Add, subtract, multiple, divide functions. Also add other ones
 // *** See here all functions for the Keys ***
 function add(a, b){
-    return(a + b);
+    return(parseFloat(a) + parseFloat(b));
 } // +
 
 function subtract(a, b) {
-    return (a - b);
+    return (parseFloat(a) - parseFloat(b));
 }// -
 
 function multiply(a, b){
-    return (a * b);
+    return (parseFloat(a) * parseFloat(b));
 }// *
 
 function divide(a, b){
-    return (a / b);
+    return (parseFloat(a) / parseFloat(b));
 }// /
 
 function power(a, b){
-    return (a ** b);
+    return (parseFloat(a) ** parseFloat(b));
 }// **
 
 function equals() { // break and butter. update sum, clear display, preparing for new operations
-    sum = operate(operator, numA, numB);
+    if(sum != '' &&
+       numA != '' &&
+       numB != '') {
+        sum = 0;
+    }
+    sum = sum + operate(operator, numA, numB);
     clearDisplay();
-    populateDisplay();
 }
 
 function clearDisplay() { // for 'C', and when req to call
-    numA = '', numB = '', operator = '';
+    numA = '0', numB = '', operator = '';
+    populateDisplay();
 }
 
 function clearDisplayAll() { // for 'AC', and when req to clear entire display
-    numA = '', numB = '', operator = '', sum = '';
+    numA = '0', numB = '', operator = '', sum = '';
+    populateDisplay();
 }
 
 // *** End all functions for the keys ***
@@ -95,8 +172,7 @@ function operate(operation, a, b){
 }
 
 // take in the output of a,b with operator used, and display it
-let displayPara = document.querySelector('#displayPara');
-let displaySum = document.querySelector('#displaySum');
+
 function populateDisplay(){
     displaySum.textContent = sum;
     display = `${numA} ${operator} ${numB}`;
