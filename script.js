@@ -3,6 +3,7 @@ let numClicked;
 let numA = '0';
 let numB = '';
 let operator = '';
+let operator2 = '';
 let sum = '';
 let display = `${numA} ${operator} ${numB}`;
 
@@ -16,6 +17,7 @@ console.log(numBtns[0].textContent);
 for(let i = 0; i < numBtns.length; i++) {
     numBtns[i].addEventListener('click', () => {
         numClicked = numBtns[i].textContent;
+        //if(alreadyDecimal) { } // do nothing
         if(numA == '' || numA == '0') numA = numClicked;
         else if(operator == '') numA += numClicked;
         else numB += numClicked;
@@ -58,8 +60,16 @@ plusBtn.addEventListener('click', () => {
         numA = sum;
         sum = 0;
     }
-    operator = '+';
-    populateDisplay();
+    if(operator != '') {
+        extraOperator();
+        operator = '+';
+        populateDisplay();
+    }
+    else {
+        operator = '+';
+        populateDisplay();
+    }
+
 });
 
 minusBtn.addEventListener('click', () => {
@@ -67,8 +77,15 @@ minusBtn.addEventListener('click', () => {
         numA = sum;
         sum = 0;
     }
-    operator = '-';
-    populateDisplay();
+    if(operator != '') {
+        extraOperator();
+        operator = '-';
+        populateDisplay();
+    }
+    else {
+        operator = '-';
+        populateDisplay();
+    }
 })
 
 multiplyBtn.addEventListener('click', () => {
@@ -76,8 +93,15 @@ multiplyBtn.addEventListener('click', () => {
         numA = sum;
         sum = 0;
     }
-    operator = '*';
-    populateDisplay();
+    if(operator != '') {
+        extraOperator();
+        operator = '*';
+        populateDisplay();
+    }
+    else {
+        operator = '*';
+        populateDisplay();
+    }
 })
 
 divideBtn.addEventListener('click', () => {
@@ -85,17 +109,18 @@ divideBtn.addEventListener('click', () => {
         numA = sum;
         sum = 0;
     }
-    operator = '/';
-    populateDisplay();
+    if(operator != '') {
+        extraOperator();
+        operator = '/';
+        populateDisplay();
+    }
+    else {
+        operator = '/';
+        populateDisplay();  
+    }
+
 })
-// backspace
 
-// negative or positive 
-// clear
-// all clear 
-// divide multiply minus plus 
-
-//initialize
 populateDisplay();
 // Step 1: Add, subtract, multiple, divide functions. Also add other ones
 // *** See here all functions for the Keys ***
@@ -112,6 +137,11 @@ function multiply(a, b){
 }// *
 
 function divide(a, b){
+    if(b == '0') {
+        clearDisplayAll();
+        alert("How dare you! You cannot divide by zero!");
+        return 0;
+    }
     return (parseFloat(a) / parseFloat(b));
 }// /
 
@@ -119,14 +149,25 @@ function power(a, b){
     return (parseFloat(a) ** parseFloat(b));
 }// **
 
-function equals() { // break and butter. update sum, clear display, preparing for new operations
+function equals(operator2) { // bread and butter. update sum, clear display, preparing for new operations
     if(sum != '' &&
        numA != '' &&
        numB != '') {
         sum = 0;
     }
-    sum = sum + operate(operator, numA, numB);
-    clearDisplay();
+    if(operator2 == 2) {
+        numA = operate(operator, numA, numB);
+        numB = '', operator = '';
+    }
+    else {
+        sum = sum + operate(operator, numA, numB);
+        if(sum % 1 != 0) {
+            sum = parseFloat(sum).toFixed(5);
+        }
+
+        clearDisplay();
+    }
+
 }
 
 function clearDisplay() { // for 'C', and when req to call
@@ -168,13 +209,37 @@ function operate(operation, a, b){
             break;
     } // now have the output
     //populateDisplay(output);
-    return output;
+    return output.toFixed(5);
 }
 
 // take in the output of a,b with operator used, and display it
 
 function populateDisplay(){
+    if(numA[numA.length-1] == '.' && alreadyDecimal(numA)) {
+        numA = numA.slice(0,-1);
+    }
+    if(numB[numB.length-1] == '.' && alreadyDecimal(numB)) {
+        numB = numB.slice(0,-1);
+    }
     displaySum.textContent = sum;
     display = `${numA} ${operator} ${numB}`;
     displayPara.textContent = display;
+}
+
+// to allow stringing of multiple numbers and operations
+function extraOperator() {
+    equals(2); // call equals with a second operator
+}
+
+function alreadyDecimal(num) {
+    // if still on numA
+    let arr = [];
+    let found = '';
+    arr = num.split('');
+    found = arr.reduce((initialStr, currentChar) => {
+        if(currentChar == '.'){ return initialStr += '.';}
+        return '';
+    },'');
+    console.log(found);
+    return (found == '..');
 }
